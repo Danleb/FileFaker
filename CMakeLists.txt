@@ -13,6 +13,8 @@ endfunction()
 cmake_minimum_required(VERSION 3.13)
 InstallConanPackages()
 project(FileFaker VERSION 1.0.0)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library(FileFakerObjectLib OBJECT "")
 set_property(TARGET FileFakerObjectLib PROPERTY POSITION_INDEPENDENT_CODE 1)
@@ -22,8 +24,10 @@ add_library(FileFakerSharedLib SHARED $<TARGET_OBJECTS:FileFakerObjectLib>)
 add_executable(FileFakerExecutable "")
 set_target_properties(FileFakerExecutable PROPERTIES OUTPUT_NAME "filefaker")
 
+add_library(FileFakerInjectSharedLibrary SHARED "")
+
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-CONAN_BASIC_SETUP()
+conan_basic_setup()
 
 add_subdirectory("src")
 add_subdirectory("headers")
