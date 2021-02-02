@@ -1,14 +1,15 @@
+#include <stdbool.h>
 #include <Windows.h>
-#include "pe_parser.h"
-#include "redirections_receiver.h"
+
+#include "file_faker_client.h"
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
 	switch (fdwReason)
 	{
 	case DLL_PROCESS_ATTACH:
-		LPSECURITY_ATTRIBUTES security_attributes;
-		CreateThread(security_attributes, 0, main_loop, NULL, 0, NULL);
+		//LPSECURITY_ATTRIBUTES security_attributes;
+		//CreateThread(security_attributes, 0, file_faker_client_loop, NULL, 0, NULL);
 		break;
 
 	case DLL_THREAD_ATTACH:
@@ -24,23 +25,4 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 		break;
 	}
 	return TRUE;
-}
-
-void main_loop()
-{
-
-
-	while (true)
-	{
-		/*command = wait_for_command();
-
-		if (command.type == remove_redirection)
-		{
-
-		}
-		else if (command.type == add_redirection)
-		{
-
-		}*/
-	}
 }

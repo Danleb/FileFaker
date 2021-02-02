@@ -1,28 +1,47 @@
+#include <fstream>
 #include <gtest/gtest.h>
 #include <Windows.h>
 
-//#include "ProcessRunner.h"
+#include "file_faker_server.h"
+#include "ProcessRunner.h"
 
 namespace file_faker_tests
 {
-	TEST(FileFakerTests, FileReaderTest)
-	{
-		/*utils::ProcessRunner runner("TestFileReaderProgram");
-		std::string output = runner.Run("1.txt");
-	//	ASSERT_EQ(output, "Empty input");*/
-		EXPECT_EQ(true, false);
-    }
+	const char* TestProgram = "TestFileReaderProgram";
+	const char* TrueInfoFileName = "1.txt";
+	const char* FakedInfoFileName = "2.txt";
+	const char* TrueInfo = "This is a file with true info.";
+	const char* FakedInfo = "This is a file with faked info";
 
-	TEST(FileFakerTests, ZeroTest)
+	enum class FileFunctionType
 	{
-		ASSERT_DOUBLE_EQ(1.0, 1.000001);
+		fopen
+	};
+
+	void CreateFiles()
+	{
+		std::ofstream file(TrueInfoFileName);
+		file << TrueInfo;
+		file.close();
+
+		file.open(FakedInfoFileName);
+		file << FakedInfo;
+		file.close();
 	}
 
-	TEST(ABC, TEST1) {
+	TEST(FileFakerTests, EmptyTest)
+	{
 		EXPECT_EQ(true, true);
 	}
 
-	TEST(ABC, TEST2) {
-		EXPECT_EQ(true, true);
+	TEST(FileFakerTests, fopen_Test)
+	{
+		CreateFiles();
+		utils::ProcessRunner runner(TestProgram);
+		runner.Run();
+		//redirect_file_io(runner.GetProcessId(), TrueInfoFileName, FakedInfoFileName);
+		runner.WriteLine(TrueInfoFileName);
+		std::string text_from_file = runner.ReadLine();
+		ASSERT_EQ(FakedInfo, text_from_file);
 	}
 }

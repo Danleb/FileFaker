@@ -3,7 +3,7 @@ add_executable(TestFileReaderProgram "TestFileReaderProgram.c")
 add_executable(FileFakerTests "")
 
 target_link_libraries(FileFakerTests
-	#FileFakerObjectLib
+	FileFakerObjectLib
 	${CONAN_LIBS}
 )
 
@@ -17,7 +17,7 @@ target_include_directories(FileFakerTests PRIVATE
 
 add_subdirectory("utils")
 
-#enable_testing()
+enable_testing()
 add_test(NAME FileFakerTests
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 	COMMAND FileFakerTests

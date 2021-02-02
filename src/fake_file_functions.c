@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <string.h>
+
 #include "file_faker.h"
 
 HFILE FakeOpenFile(LPCSTR lpFileName, LPOFSTRUCT lpReOpenBuff, UINT uStyle)

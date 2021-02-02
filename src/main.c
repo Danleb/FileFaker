@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <string.h>
 
-//#include "file_faker.h"
+#include "file_faker_server.h"
 
 #define CMD_BUFFER_SIZE 2048
 
@@ -41,11 +41,11 @@ int main()
 			int redirection_handle = -1;
 			if (result)
 			{
-				//redirection_handle = redirect_files_io(pid, file_from_buffer, file_to_buffer);
+				redirection_handle = redirect_files_io(pid, file_from_buffer, file_to_buffer);
 			}
 			else
 			{
-				//redirection_handle = redirect_files_io(pid, file_from_buffer);
+				redirection_handle = redirect_files_io(pid, file_from_buffer);
 			}
 
 			if (redirection_handle == -1)

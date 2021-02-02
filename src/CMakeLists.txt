@@ -1,8 +1,9 @@
 target_sources(FileFakerObjectLib PRIVATE
-	"main.c"
+	"file_faker_server.c"
+	"injector_loader.c"
 )
 
-target_sources(FileFakerInjectSharedLibrary PRIVATE
+target_sources(FileFakerClient PRIVATE
 	"main_dll.c"
 )
 

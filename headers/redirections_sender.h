@@ -1,1 +1,0 @@
-void send_redirection();

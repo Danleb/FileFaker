@@ -24,7 +24,7 @@ add_library(FileFakerSharedLib SHARED $<TARGET_OBJECTS:FileFakerObjectLib>)
 add_executable(FileFakerExecutable "")
 set_target_properties(FileFakerExecutable PROPERTIES OUTPUT_NAME "filefaker")
 
-add_library(FileFakerInjectSharedLibrary SHARED "")
+add_library(FileFakerClient SHARED "")
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()

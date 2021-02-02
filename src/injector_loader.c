@@ -1,8 +1,8 @@
-#pragma once
 #include <stdbool.h>
 #include <stdio.h>
 #include <Windows.h>
-#include "file_faker.h"
+
+#include "file_faker_server.h"
 
 const char INJECT_LIBRARY_NAME[] = "FileFaker.dll";
 const char KERNEL32_LIBRARY_NAME[] = "kernel32.dll";
@@ -13,10 +13,10 @@ LPCSTR load_library_function_name = TEXT("LoadLibrary");
 
 bool load_injector_library(PID pid)
 {
-	DWORD desired_access = PROCESS_VM_READ ||
-		PROCESS_VM_WRITE ||
-		PROCESS_VM_OPERATION ||
-		PROCESS_CREATE_THREAD ||
+	DWORD desired_access = PROCESS_VM_READ |
+		PROCESS_VM_WRITE |
+		PROCESS_VM_OPERATION |
+		PROCESS_CREATE_THREAD |
 		PROCESS_QUERY_INFORMATION;
 	HANDLE process_handle = OpenProcess(desired_access, FALSE, pid);
 	if (process_handle == NULL)
@@ -35,7 +35,7 @@ bool load_injector_library(PID pid)
 	}
 
 	SIZE_T memory_size = full_path_length + 1;
-	LPVOID allocated_memory = VirtualAllocEx(process_handle, NULL, memory_size, , PAGE_READWRITE);
+	LPVOID allocated_memory = VirtualAllocEx(process_handle, NULL, memory_size, 999, PAGE_READWRITE);
 	if (allocated_memory == NULL)
 	{
 		DWORD error = GetLastError();
