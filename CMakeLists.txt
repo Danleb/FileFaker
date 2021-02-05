@@ -25,6 +25,9 @@ add_executable(FileFakerExecutable "")
 set_target_properties(FileFakerExecutable PROPERTIES OUTPUT_NAME "filefaker")
 
 add_library(FileFakerClient SHARED "")
+set_target_properties(FileFakerClient PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin
+)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()

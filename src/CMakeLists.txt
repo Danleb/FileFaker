@@ -5,6 +5,7 @@ target_sources(FileFakerObjectLib PRIVATE
 
 target_sources(FileFakerClient PRIVATE
 	"main_dll.c"
+	"file_faker_client.c"
 )
 
 target_sources(FileFakerExecutable PRIVATE

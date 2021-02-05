@@ -7,6 +7,7 @@
 
 typedef DWORD PID;
 typedef int REDIRECTION_HANDLE;
+#define INVALID_REDIRECTION_HANDLE -1
 
 typedef struct ProcessInjectData
 {
@@ -43,8 +44,16 @@ extern RedirectionData* redirection_datas;
 extern size_t injected_processes_count;
 extern ProcessInjectData* injected_processes;
 
-REDIRECTION_HANDLE redirect_files_io(PID pid, char* file_path_from);
-REDIRECTION_HANDLE redirect_file_io(PID pid, char* file_path_from, char* file_path_to);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void restore_file_io(REDIRECTION_HANDLE handle);
-bool get_named_pipe_name(PID pid, LPCSTR pipe_name, size_t size, bool serverWrite);
+	REDIRECTION_HANDLE redirect_files_io(PID pid, const char* file_path_to);
+	REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const char* file_path_to);
+
+	void restore_file_io(REDIRECTION_HANDLE handle);
+	bool get_named_pipe_name(PID pid, LPCSTR pipe_name, size_t size, bool serverWrite);
+
+#ifdef __cplusplus
+}
+#endif

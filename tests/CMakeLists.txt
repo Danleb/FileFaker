@@ -19,6 +19,8 @@ add_subdirectory("utils")
 
 enable_testing()
 add_test(NAME FileFakerTests
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMAND FileFakerTests
 )
+
+message("BINARY="${CMAKE_BINARY_DIR})

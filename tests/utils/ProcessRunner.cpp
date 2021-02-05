@@ -128,7 +128,7 @@ namespace utils
 	void ProcessRunner::WriteLine(const std::string& input)
 	{
 		std::vector<CHAR> buffer(input.begin(), input.end());
-		buffer.insert(buffer.end(), END_LINE.begin(), END_LINE.end());		
+		buffer.insert(buffer.end(), END_LINE.begin(), END_LINE.end());
 
 		BOOL success = WriteFile(m_child_std_in_write, buffer.data(), buffer.size(), NULL, NULL);
 		if (!success)
@@ -166,7 +166,15 @@ namespace utils
 			{
 				if (m_is_process_output_ended)
 				{
-					return false;
+					if (output.empty())
+					{
+						return false;
+					}
+					else
+					{
+						line = output;
+						return true;
+					}
 				}
 			}
 			else

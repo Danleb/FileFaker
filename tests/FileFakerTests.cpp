@@ -7,11 +7,11 @@
 
 namespace file_faker_tests
 {
-	const char* TestProgram = "TestFileReaderProgram";
+	const char* TestProgram = "TestFileReaderProgram.exe";
 	const char* TrueInfoFileName = "1.txt";
 	const char* FakedInfoFileName = "2.txt";
 	const char* TrueInfo = "This is a file with true info.";
-	const char* FakedInfo = "This is a file with faked info";
+	const char* FakedInfo = "This is a file with faked info.";
 
 	enum class FileFunctionType
 	{
@@ -39,7 +39,8 @@ namespace file_faker_tests
 		CreateFiles();
 		utils::ProcessRunner runner(TestProgram);
 		runner.Run();
-		//redirect_file_io(runner.GetProcessId(), TrueInfoFileName, FakedInfoFileName);
+		redirect_file_io(runner.GetProcessId(), TrueInfoFileName, FakedInfoFileName);
+		Sleep(100);
 		runner.WriteLine(TrueInfoFileName);
 		std::string text_from_file = runner.ReadLine();
 		ASSERT_EQ(FakedInfo, text_from_file);
