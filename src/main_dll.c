@@ -9,7 +9,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 	{
 	case DLL_PROCESS_ATTACH:
 	{
-		CreateThread(NULL, 0, file_faker_client_loop, NULL, 0, NULL);
+		CreateThread(NULL, 0, file_faker_client_thread, NULL, 0, NULL);
 		break;
 	}
 	case DLL_THREAD_ATTACH:

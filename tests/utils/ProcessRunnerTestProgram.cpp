@@ -78,6 +78,15 @@ int main(int argc, char* argv[])
 			std::cin >> s;
 			std::cout << "This is line #" << (i + 1) << std::endl;
 		}
+		break;
+	}
+	case CommandType::ExitCode111:
+	{
+		return 111;
+	}
+	case CommandType::ExitCode1234:
+	{
+		return 1234;
 	}
 	case CommandType::None:
 	default:

@@ -2,47 +2,42 @@
 #include <stddef.h>
 #include <Windows.h>
 
+#include "file_redirector.h"
+
 #define PIPE_NAME_SIZE 256
-#define FILE_PATH_SIZE 1024
+extern const char CLIENT_READY_MESSAGE[];
 
-typedef DWORD PID;
-typedef int REDIRECTION_HANDLE;
-#define INVALID_REDIRECTION_HANDLE -1
-
-typedef struct ProcessInjectData
+typedef struct MessagingData
 {
 	PID pid;
-	CHAR pipe_server_write_name[PIPE_NAME_SIZE];
-	HANDLE pipe_server_write_handle;
+	HANDLE pipe_read_handle;
+	HANDLE pipe_write_handle;
 	CHAR pipe_server_read_name[PIPE_NAME_SIZE];
-	HANDLE pipe_server_read_handle;
-} ProcessInjectData;
+	CHAR pipe_server_write_name[PIPE_NAME_SIZE];
+} MessagingData;
 
-typedef struct RedirectionData
+typedef enum ServerCommandType
 {
-	REDIRECTION_HANDLE handle;
-	PID pid;
-	char file_path_from[FILE_PATH_SIZE];
-	char file_path_to[FILE_PATH_SIZE];
-} RedirectionData;
+	AddRedirection,
+	RemoveRedirection
+} ServerCommandType;
 
 typedef struct ServerMessageData
 {
-	BOOL file_from_defined;
-	CHAR file_from[FILE_PATH_SIZE];
-	CHAR file_to[FILE_PATH_SIZE];
+	ServerCommandType command_type;
+	RedirectionData redirection_data;
 } ServerMessageData;
 
 typedef struct ClientMessageData
 {
-	BOOL success;
+	bool success;
 } ClientMessageData;
 
 extern size_t redirection_datas_count;
 extern RedirectionData* redirection_datas;
 
 extern size_t injected_processes_count;
-extern ProcessInjectData* injected_processes;
+extern MessagingData* injected_processes;
 
 #ifdef __cplusplus
 extern "C" {

@@ -21,10 +21,12 @@ namespace utils
 		void Terminate();
 		DWORD GetProcessId() const;
 		HANDLE GetProcessHandle() const;
+		DWORD GetExitCode();
 
 		void WriteLine(const std::string& input);
 		bool ReadLine(std::string& line);
 		std::string ReadLine();
+		std::string ReadToEnd();
 
 	protected:
 

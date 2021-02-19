@@ -265,4 +265,30 @@ namespace utils
 		Run(arguments);
 		return WaitForExit();
 	}
+
+	DWORD ProcessRunner::GetExitCode()
+	{
+		DWORD exit_code;
+		BOOL success = GetExitCodeProcess(m_process_information.hProcess, &exit_code);
+		if (success)
+		{
+			return exit_code;
+		}
+		else
+		{
+			throw std::runtime_error("Failed to get process exit code.");
+		}
+	}
+
+	std::string ProcessRunner::ReadToEnd()
+	{
+		std::string output;
+		std::string line;
+		while (ReadLine(line))
+		{
+			output.append(line);
+			output.append(END_LINE);
+		}
+		return output;
+	}
 }

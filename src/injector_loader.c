@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <Windows.h>
 
+#include "injector_loader.h"
 #include "file_faker_server.h"
 
 const char INJECT_LIBRARY_NAME[] = "FileFakerClient.dll";

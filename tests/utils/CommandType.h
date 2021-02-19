@@ -9,6 +9,8 @@ namespace process_runner_tests
 		Read3Lines,
 		ReadWrite3Lines,
 		ReadAndWriteReverse,
-		PrintArguments
+		PrintArguments,
+		ExitCode111,
+		ExitCode1234
 	};
 }

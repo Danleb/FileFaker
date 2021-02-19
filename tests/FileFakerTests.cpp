@@ -18,7 +18,7 @@ namespace file_faker_tests
 		fopen
 	};
 
-	void CreateFiles()
+	void CreateTestFiles(std::vector<CHAR>& true_info_file_path, std::vector<CHAR>& faked_info_file_path)
 	{
 		std::ofstream file(TrueInfoFileName);
 		file << TrueInfo;
@@ -27,6 +27,11 @@ namespace file_faker_tests
 		file.open(FakedInfoFileName);
 		file << FakedInfo;
 		file.close();
+
+		true_info_file_path.resize(FILE_PATH_SIZE);
+		GetFullPathName(TrueInfoFileName, FILE_PATH_SIZE, true_info_file_path.data(), NULL);
+		faked_info_file_path.resize(FILE_PATH_SIZE);
+		GetFullPathName(FakedInfoFileName, FILE_PATH_SIZE, faked_info_file_path.data(), NULL);
 	}
 
 	TEST(FileFakerTests, EmptyTest)
@@ -34,15 +39,29 @@ namespace file_faker_tests
 		EXPECT_EQ(true, true);
 	}
 
+	TEST(FileFakerTests, fopen_Test_SameProcess)
+	{
+		DWORD pid = GetCurrentProcessId();
+		std::vector<CHAR> true_info_file_path;
+		std::vector<CHAR> faked_info_file_path;
+		CreateTestFiles(true_info_file_path, faked_info_file_path);
+		REDIRECTION_HANDLE redirection_handle = redirect_file_io(pid, true_info_file_path.data(), faked_info_file_path.data());
+	}
+
 	TEST(FileFakerTests, fopen_Test)
 	{
-		CreateFiles();
+		std::vector<CHAR> true_info_file_path;
+		std::vector<CHAR> faked_info_file_path;
+		CreateTestFiles(true_info_file_path, faked_info_file_path);
 		utils::ProcessRunner runner(TestProgram);
 		runner.Run();
-		redirect_file_io(runner.GetProcessId(), TrueInfoFileName, FakedInfoFileName);
-		Sleep(100);
+		REDIRECTION_HANDLE redirection_handle = redirect_file_io(runner.GetProcessId(), true_info_file_path.data(), faked_info_file_path.data());
+		//Sleep(100);
 		runner.WriteLine(TrueInfoFileName);
-		std::string text_from_file = runner.ReadLine();
+		std::string text_from_file = runner.ReadToEnd();
+		runner.WaitForExit();
+		ASSERT_NE(INVALID_REDIRECTION_HANDLE, redirection_handle);
+		ASSERT_EQ(runner.GetExitCode(), EXIT_SUCCESS);
 		ASSERT_EQ(FakedInfo, text_from_file);
 	}
 }

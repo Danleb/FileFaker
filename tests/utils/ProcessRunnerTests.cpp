@@ -126,4 +126,36 @@ namespace process_runner_tests
 		ASSERT_EQ(line, "-");
 		runner.WaitForExit();
 	}
+
+	TEST(ProcessRunnerTests, ProcessRunnerTest_ReadToEnd)
+	{
+		utils::ProcessRunner runner(TEST_PROGRAM_PATH);
+		auto argument = std::to_string(static_cast<int>(CommandType::Print5Lines));
+		runner.Run(argument);
+		auto output = runner.ReadToEnd();
+		auto expected = "This is line #1\r\n" \
+			"This is line #2\r\n" \
+			"This is line #3\r\n" \
+			"This is line #4\r\n" \
+			"This is line #5\r\n";
+		ASSERT_EQ(expected, output);
+	}
+
+	TEST(ProcessRunnerTests, ProcessRunnerTest_ExitCode111)
+	{
+		utils::ProcessRunner runner(TEST_PROGRAM_PATH);
+		auto argument = std::to_string(static_cast<int>(CommandType::ExitCode111));
+		runner.RunAndWait(argument);
+		auto exit_code = runner.GetExitCode();
+		ASSERT_EQ(111, exit_code);
+	}
+
+	TEST(ProcessRunnerTests, ProcessRunnerTest_ExitCode1234)
+	{
+		utils::ProcessRunner runner(TEST_PROGRAM_PATH);
+		auto argument = std::to_string(static_cast<int>(CommandType::ExitCode1234));
+		runner.RunAndWait(argument);
+		auto exit_code = runner.GetExitCode();
+		ASSERT_EQ(1234, exit_code);
+	}
 }
