@@ -13,11 +13,6 @@ namespace file_faker_tests
 	const char* TrueInfo = "This is a file with true info.";
 	const char* FakedInfo = "This is a file with faked info.";
 
-	enum class FileFunctionType
-	{
-		fopen
-	};
-
 	void CreateTestFiles(std::vector<CHAR>& true_info_file_path, std::vector<CHAR>& faked_info_file_path)
 	{
 		std::ofstream file(TrueInfoFileName);
@@ -41,27 +36,41 @@ namespace file_faker_tests
 
 	TEST(FileFakerTests, fopen_Test_SameProcess)
 	{
-		DWORD pid = GetCurrentProcessId();
 		std::vector<CHAR> true_info_file_path;
 		std::vector<CHAR> faked_info_file_path;
 		CreateTestFiles(true_info_file_path, faked_info_file_path);
+
+		DWORD pid = GetCurrentProcessId();
 		REDIRECTION_HANDLE redirection_handle = redirect_file_io(pid, true_info_file_path.data(), faked_info_file_path.data());
+		ASSERT_NE(redirection_handle, INVALID_REDIRECTION_HANDLE);
+
+		FILE* file = fopen(true_info_file_path.data(), "r");
+		char buffer[1000];
+		fgets(buffer, 1000, file);
+		fclose(file);
+
+		std::string text_from_file(buffer);
+		ASSERT_EQ(text_from_file, FakedInfo);
 	}
 
 	TEST(FileFakerTests, fopen_Test)
 	{
-		std::vector<CHAR> true_info_file_path;
-		std::vector<CHAR> faked_info_file_path;
-		CreateTestFiles(true_info_file_path, faked_info_file_path);
-		utils::ProcessRunner runner(TestProgram);
-		runner.Run();
-		REDIRECTION_HANDLE redirection_handle = redirect_file_io(runner.GetProcessId(), true_info_file_path.data(), faked_info_file_path.data());
-		//Sleep(100);
-		runner.WriteLine(TrueInfoFileName);
-		std::string text_from_file = runner.ReadToEnd();
-		runner.WaitForExit();
-		ASSERT_NE(INVALID_REDIRECTION_HANDLE, redirection_handle);
-		ASSERT_EQ(runner.GetExitCode(), EXIT_SUCCESS);
-		ASSERT_EQ(FakedInfo, text_from_file);
+		//std::vector<CHAR> true_info_file_path;
+		//std::vector<CHAR> faked_info_file_path;
+		//CreateTestFiles(true_info_file_path, faked_info_file_path);
+		//utils::ProcessRunner runner(TestProgram);
+		//runner.Run();
+		//REDIRECTION_HANDLE redirection_handle = redirect_file_io(runner.GetProcessId(), true_info_file_path.data(), faked_info_file_path.data());
+		////Sleep(100);
+		//runner.WriteLine(TrueInfoFileName);
+		//std::string text_from_file = runner.ReadToEnd();
+		//runner.WaitForExit();
+		//ASSERT_NE(INVALID_REDIRECTION_HANDLE, redirection_handle);
+		//ASSERT_EQ(runner.GetExitCode(), EXIT_SUCCESS);
+		//ASSERT_EQ(FakedInfo, text_from_file);
 	}
+
+	//std::ifstream file(TrueInfoFileName);
+	//std::stringstream buffer;
+	//buffer << file.rdbuf();
 }

@@ -251,7 +251,7 @@ REDIRECTION_HANDLE send_redirection_from_to(MessagingData* data, const char* fil
 REDIRECTION_HANDLE send_redirection(MessagingData* data, ServerMessageData* server_message_data)
 {
 	DWORD bytes_written;
-	BOOL result = WriteFile(data->pipe_write_handle, &server_message_data, sizeof(ServerMessageData), &bytes_written, NULL);
+	BOOL result = WriteFile(data->pipe_write_handle, server_message_data, sizeof(ServerMessageData), &bytes_written, NULL);
 	if (bytes_written != sizeof(ServerMessageData))
 	{
 		return INVALID_REDIRECTION_HANDLE;

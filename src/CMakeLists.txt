@@ -1,7 +1,6 @@
 target_sources(FileFakerObjectLib PRIVATE
 	"file_faker_server.c"
-	"injector_loader.c"
-	"pe_parser.c"
+	"injector_loader.c"	
 )
 
 target_sources(FileFakerClient PRIVATE
@@ -9,10 +8,10 @@ target_sources(FileFakerClient PRIVATE
 	"file_faker_client.c"
 	"file_faker_server.c"
 	"injector_loader.c"
-	"file_redirector.c"
+	"redirections_manager.c"
 	"file_functions_hooker.c"
-	"fake_file_functions.c"
-	"pe_parser.c"
+	"hook_file_functions.c"
+	"imports_finder.c"
 )
 
 target_sources(FileFakerExecutable PRIVATE

@@ -9,7 +9,7 @@ target_link_libraries(FileFakerTests
 
 target_sources(FileFakerTests PRIVATE
 	"FileFakerTests.cpp"
-	"PE_ParserTests.cpp"
+	
 )
 
 target_include_directories(FileFakerTests PRIVATE

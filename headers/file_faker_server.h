@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <Windows.h>
 
-#include "file_redirector.h"
+#include "redirections_manager.h"
 
 #define PIPE_NAME_SIZE 256
 extern const char CLIENT_READY_MESSAGE[];

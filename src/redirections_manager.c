@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "file_redirector.h"
+#include "redirections_manager.h"
 
 size_t local_redirections_count = 0;
 RedirectionData* local_redirection_datas = NULL;
@@ -35,6 +35,10 @@ bool add_redirection(RedirectionData redirection_data)
 	}
 
 	RedirectionData* new_datas = malloc(sizeof(RedirectionData) * (local_redirections_count + 1));
+	if (new_datas == NULL)
+	{
+		return false;
+	}
 	memcpy(new_datas, local_redirection_datas, sizeof(RedirectionData) * local_redirections_count);
 	new_datas[local_redirections_count] = redirection_data;
 

@@ -5,7 +5,7 @@
 #include <Windows.h>
 
 #include "file_functions_hooker.h"
-#include "file_redirector.h"
+#include "redirections_manager.h"
 #include "file_faker_client.h"
 #include "file_faker_server.h"
 

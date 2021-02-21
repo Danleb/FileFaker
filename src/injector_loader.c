@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include "injector_loader.h"
-#include "file_faker_server.h"
+//#include "file_faker_server.h"
 
 const char INJECT_LIBRARY_NAME[] = "FileFakerClient.dll";
 const char KERNEL32_LIBRARY_NAME[] = "kernel32.dll";
