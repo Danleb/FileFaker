@@ -9,38 +9,33 @@
 #include "file_faker_client.h"
 #include "file_faker_server.h"
 
-bool file_faker_client_loop(const FILE* file);
+bool file_faker_client_loop();
 bool wait_for_message(const MessagingData* process_inject_data, ServerMessageData* server_message_data);
 
 DWORD file_faker_client_thread(LPVOID lpThreadParameter)
 {
-	FILE* file = fopen("D:\\1.txt", "w");
-	fprintf(file, "THIS IS OUTPUT FROM LOADED LIBRARY");
-	file_faker_client_loop(file);
-	fclose(file);
+	file_faker_client_loop();
 	return EXIT_SUCCESS;
 }
 
-bool file_faker_client_loop(const FILE* file)
+bool file_faker_client_loop()
 {
-	MessagingData messaging_data;
-	messaging_data.pid = GetCurrentProcessId();
-	fprintf(file, "PID=%d", messaging_data.pid);
-
 	if (!hook_file_functions())
 	{
 		printf("Failed to hook file functions.\n");
 		return false;
 	}
 
-	bool success = get_named_pipe_name(messaging_data.pid, messaging_data.pipe_server_write_name, PIPE_NAME_SIZE, true);
+	MessagingData messaging_data;
+	messaging_data.pid = GetCurrentProcessId();
+	bool success = get_named_pipe_name(messaging_data.pid, messaging_data.pipe_server_write_name, MAX_PIPE_NAME_SIZE, true);
 	if (!success)
 	{
 		printf("Client failed to get pipe name.");
 		return false;
 	}
 
-	success = get_named_pipe_name(messaging_data.pid, messaging_data.pipe_server_read_name, PIPE_NAME_SIZE, false);
+	success = get_named_pipe_name(messaging_data.pid, messaging_data.pipe_server_read_name, MAX_PIPE_NAME_SIZE, false);
 	if (!success)
 	{
 		return false;

@@ -8,6 +8,8 @@
 #define FILE_NAME_BUFFER_SIZE 2048
 
 FILE* (*fopen_Original)(char const*, char const*);
+HANDLE(*CreateFileA_Original)(LPCSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE);
+HANDLE(*CreateFileW_Original)(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE);
 
 void get_file_name(const char* original, char* final_file_name)
 {
@@ -32,9 +34,44 @@ FILE* fopen_fake(char const* fileName, char const* mode)
 	return fopen_Original(final_file_name, mode);
 }
 
-HFILE OpenFile_fake(LPCSTR lpFileName, LPOFSTRUCT lpReOpenBuff, UINT uStyle)
+HANDLE CreateFileA_fake(
+	LPCSTR                lpFileName,
+	DWORD                 dwDesiredAccess,
+	DWORD                 dwShareMode,
+	LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	DWORD                 dwCreationDisposition,
+	DWORD                 dwFlagsAndAttributes,
+	HANDLE                hTemplateFile
+)
 {
 	CHAR final_file_name[FILE_NAME_BUFFER_SIZE];
 	get_file_name(lpFileName, final_file_name);
-	return OpenFile(lpFileName, lpReOpenBuff, uStyle);
+	return CreateFileA_Original(final_file_name,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile);
+}
+
+HANDLE CreateFileW_fake(
+	LPCWSTR               lpFileName,
+	DWORD                 dwDesiredAccess,
+	DWORD                 dwShareMode,
+	LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	DWORD                 dwCreationDisposition,
+	DWORD                 dwFlagsAndAttributes,
+	HANDLE                hTemplateFile
+)
+{
+	CHAR final_file_name[FILE_NAME_BUFFER_SIZE];
+	get_file_name(lpFileName, final_file_name);
+	return CreateFileW_Original(final_file_name,
+		dwDesiredAccess,
+		dwShareMode,
+		lpSecurityAttributes,
+		dwCreationDisposition,
+		dwFlagsAndAttributes,
+		hTemplateFile);
 }

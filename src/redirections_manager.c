@@ -2,10 +2,16 @@
 
 #include "redirections_manager.h"
 
+size_t current_redirection_id = 1;
 size_t local_redirections_count = 0;
 RedirectionData* local_redirection_datas = NULL;
 
-bool add_redirection(RedirectionData redirection_data)
+REDIRECTION_HANDLE getNextRedirectionHandle()
+{
+	return current_redirection_id++;
+}
+
+REDIRECTION_HANDLE add_redirection(RedirectionData redirection_data)
 {
 	if (local_redirections_count == 0)
 	{
@@ -13,10 +19,13 @@ bool add_redirection(RedirectionData redirection_data)
 		local_redirection_datas = malloc(sizeof(RedirectionData));
 		if (local_redirection_datas == NULL)
 		{
-			return false;
+			return INVALID_REDIRECTION_HANDLE;
 		}
+
+		REDIRECTION_HANDLE new_redirection_handle = getNextRedirectionHandle();
+		redirection_data.handle = new_redirection_handle;
 		local_redirection_datas[0] = redirection_data;
-		return true;
+		return new_redirection_handle;
 	}
 
 	if (!redirection_data.file_from_defined)
@@ -31,13 +40,13 @@ bool add_redirection(RedirectionData redirection_data)
 			}
 		}
 
-		return false;
+		return INVALID_REDIRECTION_HANDLE;
 	}
 
 	RedirectionData* new_datas = malloc(sizeof(RedirectionData) * (local_redirections_count + 1));
 	if (new_datas == NULL)
 	{
-		return false;
+		return INVALID_REDIRECTION_HANDLE;
 	}
 	memcpy(new_datas, local_redirection_datas, sizeof(RedirectionData) * local_redirections_count);
 	new_datas[local_redirections_count] = redirection_data;
@@ -45,7 +54,7 @@ bool add_redirection(RedirectionData redirection_data)
 	free(local_redirection_datas);
 	local_redirection_datas = new_datas;
 
-	return false;
+	return;
 }
 
 bool remove_redirection(REDIRECTION_HANDLE redirection_handle)
@@ -60,17 +69,26 @@ bool remove_redirection(REDIRECTION_HANDLE redirection_handle)
 		RedirectionData* data = &local_redirection_datas[i];
 		if (data->handle == redirection_handle)
 		{
-			RedirectionData* new_datas = malloc(sizeof(RedirectionData) * (local_redirections_count - 1));
-			if (new_datas == NULL)
+			if (local_redirections_count == 1)
 			{
-				return false;
+				free(local_redirection_datas);
+				local_redirection_datas = NULL;
+				local_redirections_count = 0;
+				return true;
 			}
-			memcpy(new_datas, local_redirection_datas, sizeof(RedirectionData) * i);
-			memcpy(new_datas + i, local_redirection_datas + i + 1, sizeof(RedirectionData) * (local_redirections_count - i - 1));
-
-			local_redirections_count--;
-			free(local_redirection_datas);
-			local_redirection_datas = new_datas;
+			else
+			{
+				RedirectionData* new_datas = malloc(sizeof(RedirectionData) * (local_redirections_count - 1));
+				if (new_datas == NULL)
+				{
+					return false;
+				}
+				memcpy(new_datas, local_redirection_datas, sizeof(RedirectionData) * i);
+				memcpy(new_datas + i, local_redirection_datas + i + 1, sizeof(RedirectionData) * (local_redirections_count - i - 1));
+				free(local_redirection_datas);
+				local_redirection_datas = new_datas;
+				local_redirections_count--;
+			}
 
 			return true;
 		}

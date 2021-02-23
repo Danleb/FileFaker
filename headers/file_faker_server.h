@@ -4,7 +4,7 @@
 
 #include "redirections_manager.h"
 
-#define PIPE_NAME_SIZE 256
+#define MAX_PIPE_NAME_SIZE 256
 extern const char CLIENT_READY_MESSAGE[];
 
 typedef struct MessagingData
@@ -12,8 +12,8 @@ typedef struct MessagingData
 	PID pid;
 	HANDLE pipe_read_handle;
 	HANDLE pipe_write_handle;
-	CHAR pipe_server_read_name[PIPE_NAME_SIZE];
-	CHAR pipe_server_write_name[PIPE_NAME_SIZE];
+	CHAR pipe_server_read_name[MAX_PIPE_NAME_SIZE];
+	CHAR pipe_server_write_name[MAX_PIPE_NAME_SIZE];
 } MessagingData;
 
 typedef enum ServerCommandType
@@ -31,6 +31,7 @@ typedef struct ServerMessageData
 typedef struct ClientMessageData
 {
 	bool success;
+	REDIRECTION_HANDLE redirection_handle;
 } ClientMessageData;
 
 extern size_t redirection_datas_count;
@@ -45,8 +46,7 @@ extern "C" {
 
 	REDIRECTION_HANDLE redirect_files_io(PID pid, const char* file_path_to);
 	REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const char* file_path_to);
-
-	void restore_file_io(REDIRECTION_HANDLE handle);
+	bool restore_file_io(PID pid, REDIRECTION_HANDLE handle);
 	bool get_named_pipe_name(PID pid, LPCSTR pipe_name, size_t size, bool serverWrite);
 
 #ifdef __cplusplus

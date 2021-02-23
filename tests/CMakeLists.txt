@@ -1,4 +1,8 @@
-add_executable(TestFileReaderProgram "TestFileReaderProgram.c")
+add_executable(TestFileReaderProgram "TestFileReaderProgram.cpp")
+
+target_include_directories(TestFileReaderProgram PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 add_executable(FileFakerTests "")
 
@@ -8,8 +12,8 @@ target_link_libraries(FileFakerTests
 )
 
 target_sources(FileFakerTests PRIVATE
-	"FileFakerTests.cpp"
-	
+	"FileFakerTestsSameProcessF.cpp"
+	"FileFakerTestsChildProcessF.cpp"
 )
 
 target_include_directories(FileFakerTests PRIVATE

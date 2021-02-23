@@ -7,6 +7,8 @@
 
 #include "imports_finder.h"
 
+#define PRINT_IMPORTS
+
 LPVOID find_imported_function_address(void* required_imported_function, HMODULE module);
 
 int find_imported_function_addresses(void* imported_function_address, void** addresses_list, int addresses_count)
@@ -42,11 +44,13 @@ int find_imported_function_addresses(void* imported_function_address, void** add
 	{
 		HMODULE module = modules_list[i];
 
-		/*TCHAR module_name[MAX_PATH];
+#ifdef PRINT_IMPORTS
+		TCHAR module_name[MAX_PATH];
 		if (GetModuleFileNameEx(process_handle, module, module_name, sizeof(module_name) / sizeof(TCHAR)))
 		{
-			printf(TEXT("\t%s (%p)\n"), module_name, module);
-		}*/
+			printf(TEXT("Module name: %s (%p)\n"), module_name, module);
+		}
+#endif
 
 		LPVOID function_address = find_imported_function_address(imported_function_address, module);
 		if (function_address != NULL)
@@ -120,8 +124,10 @@ LPVOID find_imported_function_address(void* required_imported_function, HMODULE 
 	PIMAGE_IMPORT_DESCRIPTOR import_descriptor = (BYTE*)base_module_address + import_image_data_directory.VirtualAddress;
 	while (import_descriptor->Characteristics != NULL)
 	{
+#ifdef PRINT_IMPORTS
 		PCHAR module_name = (BYTE*)base_module_address + import_descriptor->Name;
-		//printf("\nLibrary name: %s \n", module_name);
+		printf("\nLibrary name: %s \n", module_name);
+#endif
 
 		if (is32bit)
 		{
@@ -144,8 +150,10 @@ LPVOID find_imported_function_address(void* required_imported_function, HMODULE 
 					continue;
 				}
 
+#ifdef PRINT_IMPORTS
 				CHAR* function_name = (BYTE*)base_module_address + hint_name_array->u1.AddressOfData + 2;
-				//printf("%s \n", function_name);
+				printf("%s \n", function_name);
+#endif
 
 				BYTE** function_address = &(iat_array->u1.Function);
 

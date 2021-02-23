@@ -20,7 +20,7 @@ int main()
 		int result = scanf("%s", command_buffer);
 		if (!result)
 		{
-			printf("Invalid command.");
+			printf("Invalid command.\n");
 			continue;
 		}
 
@@ -57,7 +57,7 @@ int main()
 				printf("File input was successfully redirected. Rediretion Id = %d", redirection_handle);
 			}
 		}
-		else if (strcmp("restore", command_buffer))
+		else if (strcmp("restore", command_buffer) == 0)
 		{
 			/*result = scanf("%d", &pid);
 			if (!result)
@@ -80,7 +80,7 @@ int main()
 		}
 		else
 		{
-			printf("Invalid command");
+			printf("Invalid command\n");
 		}
 	}
 

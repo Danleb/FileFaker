@@ -21,5 +21,5 @@ typedef struct RedirectionData
 extern size_t local_redirections_count;
 extern RedirectionData* local_redirection_datas;
 
-bool add_redirection(RedirectionData redirection_data);
+REDIRECTION_HANDLE add_redirection(RedirectionData redirection_data);
 bool remove_redirection(REDIRECTION_HANDLE redirection_handle);

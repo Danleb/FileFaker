@@ -14,16 +14,30 @@ bool hook_file_function(void* original_function, void* hook_function);
 bool hook_file_functions()
 {
 	void* functions_to_hook[] = {
-		fopen
+		fopen,
+		CreateFileA,
+		CreateFileW,
 	};
 	void* hook_functions[] = {
-		fopen_fake
+		fopen_fake,
+		CreateFileA_fake,
+		CreateFileW_fake,
 	};
 	void** original_addresses[] = {
-		&fopen_Original
+		&fopen_Original,
+		&CreateFileA_Original,
+		&CreateFileW_Original,
 	};
 
 	size_t count = sizeof(functions_to_hook) / sizeof(void*);
+	size_t count2 = sizeof(hook_functions) / sizeof(void*);
+	size_t count3 = sizeof(original_addresses) / sizeof(void*);
+	if (count != count2 || count != count3)
+	{
+		printf("Functions arrays have different sizes.\n");
+		return false;
+	}
+
 	for (size_t i = 0; i < count; ++i)
 	{
 		*original_addresses[i] = functions_to_hook[i];

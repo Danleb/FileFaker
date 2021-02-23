@@ -12,11 +12,6 @@
 #define BUFFER_SIZE 8192
 
 const char CLIENT_READY_MESSAGE[] = "Client is ready.";
-
-size_t redirection_datas_count = 0;
-RedirectionData* redirection_datas = NULL;
-REDIRECTION_HANDLE redirection_counter = 0;
-
 size_t injected_processes_count = 0;
 MessagingData* injected_processes = NULL;
 
@@ -33,7 +28,7 @@ REDIRECTION_HANDLE redirect_files_io(PID pid, const char* file_path_to)
 	MessagingData* process_inject_data = NULL;
 	if (!initialize_file_faker_client(pid, process_inject_data))
 	{
-		printf("Failed to inject to the process.\n");
+		printf("Failed to inject to the process ID=%d.\n", pid);
 		return INVALID_REDIRECTION_HANDLE;
 	}
 	REDIRECTION_HANDLE redirection_handle = send_redirection_to(pid, file_path_to);
@@ -45,11 +40,28 @@ REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const c
 	MessagingData process_inject_data;
 	if (!initialize_file_faker_client(pid, &process_inject_data))
 	{
-		printf("Failed to inject to the process.\n");
+		printf("Failed to inject to the process ID=%d.\n", pid);
 		return INVALID_REDIRECTION_HANDLE;
 	}
 	REDIRECTION_HANDLE redirection_handle = send_redirection_from_to(&process_inject_data, file_path_from, file_path_to);
 	return redirection_handle;
+}
+
+bool restore_file_io(PID pid, REDIRECTION_HANDLE handle)
+{
+	for (size_t i = 0; i < injected_processes_count; ++i)
+	{
+		if (injected_processes[i].pid == pid)
+		{
+			ServerCommandType command_type = RemoveRedirection;
+			ServerMessageData message_data;
+			message_data.command_type = command_type;
+			message_data.redirection_data.handle = handle;
+
+			return true;
+		}
+	}
+	return false;
 }
 
 bool initialize_file_faker_client(PID pid, MessagingData* data)
@@ -154,8 +166,11 @@ bool get_named_pipe_name(PID pid, LPCSTR pipe_name, size_t size, bool serverWrit
 
 bool initialize_pipes(MessagingData* data)
 {
-	get_named_pipe_name(data->pid, data->pipe_server_write_name, PIPE_NAME_SIZE, true);
-	DWORD max_instances = 10;
+	if (!get_named_pipe_name(data->pid, data->pipe_server_write_name, MAX_PIPE_NAME_SIZE, true))
+	{
+		return false;
+	}
+	DWORD max_instances = 10;//?
 	HANDLE pipe = CreateNamedPipe(data->pipe_server_write_name, PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, max_instances, BUFFER_SIZE, BUFFER_SIZE, 0, NULL);
 	if (pipe == INVALID_HANDLE_VALUE)
 	{
@@ -163,7 +178,10 @@ bool initialize_pipes(MessagingData* data)
 	}
 	data->pipe_write_handle = pipe;
 
-	get_named_pipe_name(data->pid, data->pipe_server_read_name, PIPE_NAME_SIZE, false);
+	if (!get_named_pipe_name(data->pid, data->pipe_server_read_name, MAX_PIPE_NAME_SIZE, false))
+	{
+		return false;
+	}
 	pipe = CreateNamedPipe(data->pipe_server_read_name, PIPE_ACCESS_INBOUND, PIPE_TYPE_BYTE, max_instances, BUFFER_SIZE, BUFFER_SIZE, 0, NULL);
 	if (pipe == INVALID_HANDLE_VALUE)
 	{
@@ -278,30 +296,11 @@ REDIRECTION_HANDLE send_redirection(MessagingData* data, ServerMessageData* serv
 
 	if (client_message_data.success)
 	{
-		RedirectionData* old_datas = redirection_datas;
-		redirection_datas_count++;
-		redirection_datas = malloc(sizeof(RedirectionData) * redirection_datas_count);
-		if (redirection_datas == NULL)
-		{
-			return INVALID_REDIRECTION_HANDLE;
-		}
-		if (old_datas != NULL)
-		{
-			memcpy(redirection_datas, old_datas, sizeof(RedirectionData) * (redirection_datas_count - 1));
-			free(old_datas);
-		}
-
-		RedirectionData redirection_data;
-		redirection_data.pid = data->pid;
-		REDIRECTION_HANDLE handle = ++redirection_counter;
-		redirection_data.handle = handle;
-		redirection_datas[redirection_datas_count - 1] = redirection_data;
-
-		return handle;
+		return client_message_data.redirection_handle;
 	}
 	else
 	{
-		printf("Failed to redirect file.");
+		printf("Failed to redirect file.\n");
 		return INVALID_REDIRECTION_HANDLE;
 	}
 }
