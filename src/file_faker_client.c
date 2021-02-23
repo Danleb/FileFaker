@@ -80,7 +80,9 @@ bool file_faker_client_loop()
 		{
 		case AddRedirection:
 		{
-			client_message_data.success = add_redirection(server_message_data.redirection_data);
+			REDIRECTION_HANDLE redirection_handle = add_redirection(server_message_data.redirection_data);
+			client_message_data.success = redirection_handle != INVALID_REDIRECTION_HANDLE;
+			client_message_data.redirection_handle = redirection_handle;
 			break;
 		}
 		case RemoveRedirection:

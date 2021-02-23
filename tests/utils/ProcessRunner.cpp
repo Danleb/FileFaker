@@ -284,10 +284,18 @@ namespace utils
 	{
 		std::string output;
 		std::string line;
+		bool first_line = true;
 		while (ReadLine(line))
 		{
+			if (first_line)
+			{
+				first_line = false;
+			}
+			else
+			{
+				output.append(END_LINE);
+			}
 			output.append(line);
-			output.append(END_LINE);
 		}
 		return output;
 	}

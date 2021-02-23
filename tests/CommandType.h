@@ -6,6 +6,7 @@ namespace file_faker_tests
 		fopen,
 		CreateFileA,
 		CreateFileW,
-		ofstream
+		ifstream,
+		ofstream,
 	};
 }

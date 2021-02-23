@@ -7,7 +7,7 @@
 
 #include "imports_finder.h"
 
-#define PRINT_IMPORTS
+//#define PRINT_IMPORTS
 
 LPVOID find_imported_function_address(void* required_imported_function, HMODULE module);
 

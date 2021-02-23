@@ -16,18 +16,41 @@ namespace file_faker_tests
 		{
 			CreateTestFiles(true_info_file_path, faked_info_file_path);
 		}
+
+		void ExecuteTest(CommandType command_type)
+		{
+			utils::ProcessRunner runner(TestProgram);
+			runner.Run();
+			Sleep(100);
+			REDIRECTION_HANDLE redirection_handle = redirect_file_io(runner.GetProcessId(), true_info_file_path.data(), faked_info_file_path.data());
+			ASSERT_EQ(redirection_handle, 1);
+			auto command = std::to_string(static_cast<int>(CommandType::fopen));
+			runner.WriteLine(command);
+			runner.WriteLine(true_info_file_path.data());
+			std::string text_from_file = runner.ReadToEnd();
+			runner.WaitForExit();
+			ASSERT_EQ(FakedInfo, text_from_file);
+			ASSERT_EQ(runner.GetExitCode(), EXIT_SUCCESS);
+		}
 	};
 
 	TEST_F(FileFakerTestsChildProcessF, fopen_Test)
 	{
-		utils::ProcessRunner runner(TestProgram);
-		auto argument = std::to_string(static_cast<int>(CommandType::fopen));
-		runner.Run(argument);
-		Sleep(100);
-		runner.WriteLine(TrueInfoFileName);
-		std::string text_from_file = runner.ReadToEnd();
-		runner.WaitForExit();
-		ASSERT_EQ(runner.GetExitCode(), EXIT_SUCCESS);
-		ASSERT_EQ(FakedInfo, text_from_file);
+		ExecuteTest(CommandType::fopen);
+	}
+
+	TEST_F(FileFakerTestsChildProcessF, CreateFileA_Test)
+	{
+		ExecuteTest(CommandType::CreateFileA);
+	}
+
+	TEST_F(FileFakerTestsChildProcessF, CreateFileW_Test)
+	{
+		ExecuteTest(CommandType::CreateFileW);
+	}
+
+	TEST_F(FileFakerTestsChildProcessF, ifstream_Test)
+	{
+		ExecuteTest(CommandType::ifstream);
 	}
 }
