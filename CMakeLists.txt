@@ -22,7 +22,10 @@ add_library(FileFakerStaticLib STATIC $<TARGET_OBJECTS:FileFakerObjectLib>)
 add_library(FileFakerSharedLib SHARED $<TARGET_OBJECTS:FileFakerObjectLib>)
 
 add_executable(FileFakerExecutable "")
-set_target_properties(FileFakerExecutable PROPERTIES OUTPUT_NAME "filefaker")
+set_target_properties(FileFakerExecutable PROPERTIES 
+	OUTPUT_NAME "filefaker"
+	RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin
+)
 
 add_library(FileFakerClient SHARED "")
 set_target_properties(FileFakerClient PROPERTIES

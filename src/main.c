@@ -2,11 +2,29 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "file_faker_server.h"
 
 #define CMD_BUFFER_SIZE 2048
+
+void print_error()
+{
+	printf("Invalid command. Type 'help' for help.\n");
+}
+
+void print_redirection_result(REDIRECTION_HANDLE redirection_handle)
+{
+	if (redirection_handle == INVALID_REDIRECTION_HANDLE)
+	{
+		printf("\nFailed to create redirection.\n");
+	}
+	else
+	{
+		printf("\nFile input was successfully redirected. Redirection Id = %d.\n", redirection_handle);
+	}
+}
 
 int main()
 {
@@ -17,70 +35,82 @@ int main()
 
 	while (true)
 	{
-		int result = scanf("%s", command_buffer);
-		if (!result)
-		{
-			printf("Invalid command.\n");
-			continue;
-		}
-
+		int count = scanf_s("%2047s", command_buffer, CMD_BUFFER_SIZE);
 		command_buffer[CMD_BUFFER_SIZE - 1] = 0;
-		if (strcmp("redirect", command_buffer) == 0)
+		if (count != 1)
 		{
-			result = scanf("%d %s", &pid, &file_from_buffer);
-
-			if (result < 2)
+			print_error();
+		}
+		else if (strcmp(command_buffer, "redirect-file") == 0 || strcmp(command_buffer, "rf") == 0)
+		{
+			gets_s(command_buffer, CMD_BUFFER_SIZE);
+			command_buffer[CMD_BUFFER_SIZE - 1] = 0;
+			pid = atoi(command_buffer);
+			if (pid == 0)
 			{
-				printf("Invalid arguments count.");
+				print_error();
 				continue;
 			}
 
-			char* input = fgets(file_to_buffer, CMD_BUFFER_SIZE, stdin);
-			result = sscanf(file_to_buffer, "%s", file_to_buffer);
+			printf("Print file from:\n");
+			gets_s(file_from_buffer, CMD_BUFFER_SIZE);
+			printf("Print file to:\n");
+			gets_s(file_to_buffer, CMD_BUFFER_SIZE);
 
-			int redirection_handle = -1;
-			if (result)
+			REDIRECTION_HANDLE redirection_handle = redirect_file_io(pid, file_from_buffer, file_to_buffer);
+			print_redirection_result(redirection_handle);
+		}
+		else if (strcmp(command_buffer, "redirect-files") == 0 || strcmp(command_buffer, "rfs") == 0)
+		{
+			gets_s(command_buffer, CMD_BUFFER_SIZE);
+			command_buffer[CMD_BUFFER_SIZE - 1] = 0;
+			pid = atoi(command_buffer);
+			if (pid == 0)
 			{
-				redirection_handle = redirect_files_io(pid, file_from_buffer, file_to_buffer);
+				print_error();
+				continue;
+			}
+
+			gets_s(file_from_buffer, CMD_BUFFER_SIZE);
+			printf("Print file to:");
+			gets_s(file_from_buffer, CMD_BUFFER_SIZE);
+
+			REDIRECTION_HANDLE redirection_handle = redirect_files_io(pid, file_from_buffer);
+			print_redirection_result(redirection_handle);
+		}
+		else if (strcmp(command_buffer, "remove") == 0 || strcmp(command_buffer, "rm") == 0)
+		{
+			printf("Print redirection handle ID to remove:");
+			int redirection_handle;
+			int count = scanf("%s", &redirection_handle);
+			if (count != 0)
+			{
+				print_error();
+			}
+
+			bool success = restore_file_io(pid, redirection_handle);
+			if (success)
+			{
+				printf("Redirection was successfully removed.");
 			}
 			else
 			{
-				redirection_handle = redirect_files_io(pid, file_from_buffer);
-			}
-
-			if (redirection_handle == -1)
-			{
-				printf("Failed to create redirection.");
-			}
-			else
-			{
-				printf("File input was successfully redirected. Rediretion Id = %d", redirection_handle);
+				printf("Failed to remove redirection.");
 			}
 		}
-		else if (strcmp("restore", command_buffer) == 0)
+		else if (strcmp(command_buffer, "help") == 0)
 		{
-			/*result = scanf("%d", &pid);
-			if (!result)
-			{
-				printf("Invalid process id input.");
-				continue;
-			}*/
-
-			int redirection_handle;
-			result = scanf("%d", &redirection_handle);
-
-			if (!result)
-			{
-				//bool success = restore_file_io(redirection_handle);
-				//if (success)
-				//{
-
-				//}
-			}
+			printf("To redirect one file input:\n" \
+				"redirect-file|rf <process_id> <file_path_from> <file_path_to>\n" \
+				"To redirect all file inputs to one file:\n" \
+				"redirect-files|rfs <process_id> <file_path_to>\n"
+				"To remove redirection by id:\n" \
+				"remove|rm <redirection_id>\n"
+			);
 		}
 		else
 		{
-			printf("Invalid command\n");
+			print_error();
 		}
 	}
 

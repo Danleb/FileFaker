@@ -52,8 +52,8 @@ REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const c
 
 REDIRECTION_HANDLE redirect_files_io_w(PID pid, const wchar_t* file_path_to)
 {
-	MessagingData* process_inject_data = NULL;
-	if (!initialize_file_faker_client(pid, process_inject_data))
+	MessagingData process_inject_data;
+	if (!initialize_file_faker_client(pid, &process_inject_data))
 	{
 		printf("Failed to inject to the process ID=%d.\n", pid);
 		return INVALID_REDIRECTION_HANDLE;
@@ -84,7 +84,6 @@ bool restore_file_io(PID pid, REDIRECTION_HANDLE handle)
 			ServerMessageData message_data;
 			message_data.command_type = command_type;
 			message_data.redirection_data.handle = handle;
-
 			return true;
 		}
 	}

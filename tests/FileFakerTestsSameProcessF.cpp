@@ -53,11 +53,38 @@ namespace file_faker_tests
 		ASSERT_EQ(text_from_file, FakedInfo);
 	}
 
+	TEST_F(FileFakerTestsSameProcessF, _wfsopen_Test_SameProcess)
+	{
+		ASSERT_NE(redirection_handle, INVALID_REDIRECTION_HANDLE);
+
+		FILE* file = _wfsopen(wtrue_info_file_path.c_str(), L"r", _SH_DENYNO);
+		char buffer[1000];
+		fgets(buffer, 1000, file);
+		fclose(file);
+
+		std::string text_from_file(buffer);
+		ASSERT_EQ(text_from_file, FakedInfo);
+	}
+
 	TEST_F(FileFakerTestsSameProcessF, _wfopen_Test_SameProcess)
 	{
 		ASSERT_NE(redirection_handle, INVALID_REDIRECTION_HANDLE);
 
 		FILE* file = _wfopen(wtrue_info_file_path.c_str(), L"r");
+		char buffer[1000];
+		fgets(buffer, 1000, file);
+		fclose(file);
+
+		std::string text_from_file(buffer);
+		ASSERT_EQ(text_from_file, FakedInfo);
+	}
+
+	TEST_F(FileFakerTestsSameProcessF, _wfopen_s_Test_SameProcess)
+	{
+		ASSERT_NE(redirection_handle, INVALID_REDIRECTION_HANDLE);
+		FILE* file = nullptr;
+		errno_t error = _wfopen_s(&file, wtrue_info_file_path.c_str(), L"r");
+		ASSERT_EQ(error, EXIT_SUCCESS);
 		char buffer[1000];
 		fgets(buffer, 1000, file);
 		fclose(file);

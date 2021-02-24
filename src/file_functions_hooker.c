@@ -19,7 +19,6 @@ bool hook_file_function(void* original_function, void* hook_function);
 
 bool hook_file_functions()
 {
-	//todo _wfopen_s, freopen, _wfreopen,
 	HookData hook_datas[] = {
 		{
 			.function_to_hook = fopen,
@@ -56,6 +55,21 @@ bool hook_file_functions()
 			.hook_function = _wfopen_fake,
 			.original_address = &_wfopen_Original
 		},
+		{
+			.function_to_hook = _wfopen_s,
+			.hook_function = _wfopen_s_fake,
+			.original_address = &_wfopen_s_Original
+		},
+		{
+			.function_to_hook = freopen,
+			.hook_function = freopen_fake,
+			.original_address = &freopen_Original
+		},
+		{
+			.function_to_hook = _wfreopen,
+			.hook_function = _wfreopen_fake,
+			.original_address = &_wfreopen_Original
+		}
 	};
 	size_t count = sizeof(hook_datas) / sizeof(HookData);
 	for (size_t i = 0; i < count; ++i)

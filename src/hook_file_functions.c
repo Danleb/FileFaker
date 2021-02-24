@@ -13,6 +13,9 @@ FILE* (*_fsopen_Original)(char const* _FileName, char const* _Mode, int _ShFlag)
 HANDLE(*CreateFileA_Original)(LPCSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE);
 FILE* (*_wfsopen_Original)(wchar_t const* _FileName, wchar_t const* _Mode, int _ShFlag);
 FILE* (*_wfopen_Original)(wchar_t const* _FileName, wchar_t const* _Mode);
+errno_t(*_wfopen_s_Original)(FILE** _Stream, wchar_t const* _FileName, wchar_t const* _Mode);
+FILE* (*freopen_Original)(char const* _FileName, char const* _Mode, FILE* _Stream);
+FILE* (*_wfreopen_Original)(wchar_t const* _FileName, wchar_t const* _Mode, FILE* _OldStream);
 HANDLE(*CreateFileW_Original)(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE);
 
 void get_file_name_w(const wchar_t* original, wchar_t* final_file_name)
@@ -107,6 +110,27 @@ FILE* _wfopen_fake(wchar_t const* _FileName, wchar_t const* _Mode)
 	WCHAR final_file_name[FILE_NAME_BUFFER_SIZE];
 	get_file_name_w(_FileName, final_file_name);
 	return _wfopen_Original(final_file_name, _Mode);
+}
+
+errno_t _wfopen_s_fake(FILE** _Stream, wchar_t const* _FileName, wchar_t const* _Mode)
+{
+	WCHAR final_file_name[FILE_NAME_BUFFER_SIZE];
+	get_file_name_w(_FileName, final_file_name);
+	return _wfopen_s_Original(_Stream, final_file_name, _Mode);
+}
+
+FILE* freopen_fake(char const* _FileName, char const* _Mode, FILE* _Stream)
+{
+	char final_file_name[FILE_NAME_BUFFER_SIZE];
+	get_file_name(_FileName, final_file_name);
+	return freopen_Original(final_file_name, _Mode, _Stream);
+}
+
+FILE* _wfreopen_fake(wchar_t const* _FileName, wchar_t const* _Mode, FILE* _OldStream)
+{
+	WCHAR final_file_name[FILE_NAME_BUFFER_SIZE];
+	get_file_name_w(_FileName, final_file_name);
+	return _wfreopen_Original(final_file_name, _Mode, _OldStream);
 }
 
 HANDLE CreateFileW_fake(
