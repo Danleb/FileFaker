@@ -10,6 +10,7 @@
 #include "file_faker_server.h"
 
 #define BUFFER_SIZE 8192
+#define CODEPAGE CP_ACP
 
 const char CLIENT_READY_MESSAGE[] = "Client is ready.";
 size_t injected_processes_count = 0;
@@ -19,11 +20,37 @@ bool initialize_file_faker_client(PID pid, MessagingData* data);
 bool initialize_pipes(MessagingData* data);
 bool wait_client_connection_is_ready(const MessagingData* data);
 
-REDIRECTION_HANDLE send_redirection_to(const MessagingData* data, const char* file_path_to);
-REDIRECTION_HANDLE send_redirection_from_to(const MessagingData* data, const char* file_path_from, const char* file_path_to);
+REDIRECTION_HANDLE send_redirection_to(const MessagingData* data, const WCHAR* file_path_to);
+REDIRECTION_HANDLE send_redirection_from_to(const MessagingData* data, const WCHAR* file_path_from, const WCHAR* file_path_to);
 REDIRECTION_HANDLE send_redirection(const MessagingData* data, const ServerMessageData* server_message_data);
 
 REDIRECTION_HANDLE redirect_files_io(PID pid, const char* file_path_to)
+{
+	int wide_count = MultiByteToWideChar(CODEPAGE, 0, file_path_to, -1, NULL, 0);
+	WCHAR* file_path_to_w = malloc(sizeof(WCHAR) * wide_count);
+	MultiByteToWideChar(CODEPAGE, 0, file_path_to, -1, file_path_to_w, wide_count);
+	REDIRECTION_HANDLE redirection_handle = redirect_files_io_w(pid, file_path_to_w);
+	free(file_path_to_w);
+	return redirection_handle;
+}
+
+REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const char* file_path_to)
+{
+	int wide_count_from = MultiByteToWideChar(CODEPAGE, 0, file_path_from, -1, NULL, 0);
+	WCHAR* file_path_from_w = malloc(sizeof(WCHAR) * wide_count_from);
+	MultiByteToWideChar(CODEPAGE, 0, file_path_from, -1, file_path_from_w, wide_count_from);
+
+	int wide_count_to = MultiByteToWideChar(CODEPAGE, 0, file_path_to, -1, NULL, 0);
+	WCHAR* file_path_to_w = malloc(sizeof(WCHAR) * wide_count_to);
+	MultiByteToWideChar(CODEPAGE, 0, file_path_to, -1, file_path_to_w, wide_count_to);
+
+	REDIRECTION_HANDLE redirection_handle = redirect_file_io_w(pid, file_path_from_w, file_path_to_w);
+	free(file_path_to_w);
+	free(file_path_from_w);
+	return redirection_handle;
+}
+
+REDIRECTION_HANDLE redirect_files_io_w(PID pid, const wchar_t* file_path_to)
 {
 	MessagingData* process_inject_data = NULL;
 	if (!initialize_file_faker_client(pid, process_inject_data))
@@ -35,7 +62,7 @@ REDIRECTION_HANDLE redirect_files_io(PID pid, const char* file_path_to)
 	return redirection_handle;
 }
 
-REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const char* file_path_to)
+REDIRECTION_HANDLE redirect_file_io_w(PID pid, const wchar_t* file_path_from, const char* file_path_to)
 {
 	MessagingData process_inject_data;
 	if (!initialize_file_faker_client(pid, &process_inject_data))
@@ -245,23 +272,23 @@ bool wait_client_connection_is_ready(MessagingData* data)
 	}
 }
 
-REDIRECTION_HANDLE send_redirection_to(MessagingData* data, char* file_path_to)
+REDIRECTION_HANDLE send_redirection_to(MessagingData* data, const WCHAR* file_path_to)
 {
 	ServerMessageData server_message_data;
 	server_message_data.command_type = AddRedirection;
 	server_message_data.redirection_data.file_from_defined = false;
-	strcpy(server_message_data.redirection_data.file_path_to, file_path_to);
+	wcscpy(server_message_data.redirection_data.file_path_to, file_path_to);
 	REDIRECTION_HANDLE handle = send_redirection(data, &server_message_data);
 	return handle;
 }
 
-REDIRECTION_HANDLE send_redirection_from_to(MessagingData* data, const char* file_path_from, const char* file_path_to)
+REDIRECTION_HANDLE send_redirection_from_to(MessagingData* data, const WCHAR* file_path_from, const WCHAR* file_path_to)
 {
 	ServerMessageData server_message_data;
 	server_message_data.command_type = AddRedirection;
 	server_message_data.redirection_data.file_from_defined = true;
-	strcpy(server_message_data.redirection_data.file_path_from, file_path_from);
-	strcpy(server_message_data.redirection_data.file_path_to, file_path_to);
+	wcscpy(server_message_data.redirection_data.file_path_from, file_path_from);
+	wcscpy(server_message_data.redirection_data.file_path_to, file_path_to);
 	REDIRECTION_HANDLE handle = send_redirection(data, &server_message_data);
 	return handle;
 }

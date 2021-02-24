@@ -8,6 +8,7 @@
 #include "redirections_manager.h"
 #include "file_faker_client.h"
 #include "file_faker_server.h"
+#include "hook_file_functions.h"
 
 bool file_faker_client_loop();
 bool wait_for_message(const MessagingData* process_inject_data, ServerMessageData* server_message_data);
@@ -41,7 +42,7 @@ bool file_faker_client_loop()
 		return false;
 	}
 
-	HANDLE client_write_end = CreateFile(messaging_data.pipe_server_read_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+	HANDLE client_write_end = CreateFileA_Original(messaging_data.pipe_server_read_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 	if (client_write_end == INVALID_HANDLE_VALUE)
 	{
 		DWORD error_code = GetLastError();
@@ -49,7 +50,7 @@ bool file_faker_client_loop()
 	}
 	messaging_data.pipe_write_handle = client_write_end;
 
-	HANDLE client_read_end = CreateFile(messaging_data.pipe_server_write_name, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+	HANDLE client_read_end = CreateFileA_Original(messaging_data.pipe_server_write_name, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 	if (client_read_end == INVALID_HANDLE_VALUE)
 	{
 		DWORD error_code = GetLastError();
@@ -76,6 +77,7 @@ bool file_faker_client_loop()
 			break;
 		}
 
+		memset(&client_message_data, 0, sizeof(ClientMessageData));
 		switch (server_message_data.command_type)
 		{
 		case AddRedirection:

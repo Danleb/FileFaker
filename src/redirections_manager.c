@@ -32,11 +32,13 @@ REDIRECTION_HANDLE add_redirection(RedirectionData redirection_data)
 	{
 		for (size_t i = 0; i < local_redirections_count; ++i)
 		{
-			RedirectionData data = local_redirection_datas[i];
-			if (!data.file_from_defined)
+			RedirectionData* data = &local_redirection_datas[i];
+			if (!data->file_from_defined)
 			{
+				REDIRECTION_HANDLE new_redirection_handle = getNextRedirectionHandle();
+				redirection_data.handle = new_redirection_handle;
 				local_redirection_datas[i] = redirection_data;
-				return true;
+				return new_redirection_handle;
 			}
 		}
 
@@ -49,12 +51,15 @@ REDIRECTION_HANDLE add_redirection(RedirectionData redirection_data)
 		return INVALID_REDIRECTION_HANDLE;
 	}
 	memcpy(new_datas, local_redirection_datas, sizeof(RedirectionData) * local_redirections_count);
+
+	REDIRECTION_HANDLE new_redirection_handle = getNextRedirectionHandle();
+	redirection_data.handle = new_redirection_handle;
 	new_datas[local_redirections_count] = redirection_data;
 
 	free(local_redirection_datas);
 	local_redirection_datas = new_datas;
 
-	return;
+	return new_redirection_handle;
 }
 
 bool remove_redirection(REDIRECTION_HANDLE redirection_handle)

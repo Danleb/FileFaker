@@ -32,6 +32,10 @@ int find_imported_function_addresses(void* imported_function_address, void** add
 	size_t loaded_modules_count = bytes_needed / sizeof(HMODULE);
 	DWORD required_size = bytes_needed;
 	HMODULE* modules_list = malloc(required_size);
+	if (modules_list == NULL)
+	{
+		return -1;
+	}
 	if (!EnumProcessModules(process_handle, modules_list, required_size, &bytes_needed))
 	{
 		DWORD error_code = GetLastError();

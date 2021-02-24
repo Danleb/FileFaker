@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <Windows.h>
 
-#define FILE_PATH_SIZE 1024
+#define FILE_PATH_SIZE 2048
 
 typedef DWORD PID;
 typedef int REDIRECTION_HANDLE;
@@ -14,8 +14,8 @@ typedef struct RedirectionData
 	REDIRECTION_HANDLE handle;
 	BOOL file_from_defined;
 	PID pid;
-	char file_path_from[FILE_PATH_SIZE];
-	char file_path_to[FILE_PATH_SIZE];
+	WCHAR file_path_from[FILE_PATH_SIZE];
+	WCHAR file_path_to[FILE_PATH_SIZE];
 } RedirectionData;
 
 extern size_t local_redirections_count;

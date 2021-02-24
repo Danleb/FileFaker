@@ -7,41 +7,63 @@
 #include "hook_file_functions.h"
 #include "file_functions_hooker.h"
 
-#define MAX_IMPORT_ADDRESSES 200
+#define MAX_IMPORT_ADDRESSES 500
+
+typedef struct HookData {
+	void* function_to_hook;
+	void* hook_function;
+	void** original_address;
+} HookData;
 
 bool hook_file_function(void* original_function, void* hook_function);
 
 bool hook_file_functions()
 {
-	void* functions_to_hook[] = {
-		fopen,
-		CreateFileA,
-		CreateFileW,
+	//todo _wfopen_s, freopen, _wfreopen,
+	HookData hook_datas[] = {
+		{
+			.function_to_hook = fopen,
+			.hook_function = fopen_fake,
+			.original_address = &fopen_Original
+		},
+		{
+			.function_to_hook = fopen_s,
+			.hook_function = fopen_s_fake,
+			.original_address = &fopen_s_Original
+		},
+		{
+			.function_to_hook = _fsopen,
+			.hook_function = _fsopen_fake,
+			.original_address = &_fsopen_Original
+		},
+		{
+			.function_to_hook = _wfsopen,
+			.hook_function = _wfsopen_fake,
+			.original_address = &_wfsopen_Original
+		},
+		{
+			.function_to_hook = CreateFileA,
+			.hook_function = CreateFileA_fake,
+			.original_address = &CreateFileA_Original
+		},
+		{
+			.function_to_hook = CreateFileW,
+			.hook_function = CreateFileW_fake,
+			.original_address = &CreateFileW_Original
+		},
+		{
+			.function_to_hook = _wfopen,
+			.hook_function = _wfopen_fake,
+			.original_address = &_wfopen_Original
+		},
 	};
-	void* hook_functions[] = {
-		fopen_fake,
-		CreateFileA_fake,
-		CreateFileW_fake,
-	};
-	void** original_addresses[] = {
-		&fopen_Original,
-		&CreateFileA_Original,
-		&CreateFileW_Original,
-	};
-
-	size_t count = sizeof(functions_to_hook) / sizeof(void*);
-	size_t count2 = sizeof(hook_functions) / sizeof(void*);
-	size_t count3 = sizeof(original_addresses) / sizeof(void*);
-	if (count != count2 || count != count3)
-	{
-		printf("Functions arrays have different sizes.\n");
-		return false;
-	}
-
+	size_t count = sizeof(hook_datas) / sizeof(HookData);
 	for (size_t i = 0; i < count; ++i)
 	{
-		*original_addresses[i] = functions_to_hook[i];
-		bool success = hook_file_function(functions_to_hook[i], hook_functions[i]);
+		HookData* hook_data = &hook_datas[i];
+		*(hook_data->original_address) = hook_data->function_to_hook;
+		//*original_addresses[i] = functions_to_hook[i];
+		bool success = hook_file_function(hook_data->function_to_hook, hook_data->hook_function);
 		if (!success)
 		{
 			printf("Failed to hook function #%llu", i + 1);

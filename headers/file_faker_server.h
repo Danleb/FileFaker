@@ -46,6 +46,8 @@ extern "C" {
 
 	REDIRECTION_HANDLE redirect_files_io(PID pid, const char* file_path_to);
 	REDIRECTION_HANDLE redirect_file_io(PID pid, const char* file_path_from, const char* file_path_to);
+	REDIRECTION_HANDLE redirect_files_io_w(PID pid, const wchar_t* file_path_to);
+	REDIRECTION_HANDLE redirect_file_io_w(PID pid, const wchar_t* file_path_from, const char* file_path_to);
 	bool restore_file_io(PID pid, REDIRECTION_HANDLE handle);
 	bool get_named_pipe_name(PID pid, LPCSTR pipe_name, size_t size, bool serverWrite);
 

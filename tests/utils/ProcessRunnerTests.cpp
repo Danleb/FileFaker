@@ -137,7 +137,7 @@ namespace process_runner_tests
 			"This is line #2\r\n" \
 			"This is line #3\r\n" \
 			"This is line #4\r\n" \
-			"This is line #5\r\n";
+			"This is line #5";
 		ASSERT_EQ(expected, output);
 	}
 
