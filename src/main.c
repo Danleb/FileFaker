@@ -35,9 +35,9 @@ int main()
 
 	while (true)
 	{
-		int count = scanf_s("%2047s", command_buffer, CMD_BUFFER_SIZE);
+		gets_s(command_buffer, CMD_BUFFER_SIZE);
 		command_buffer[CMD_BUFFER_SIZE - 1] = 0;
-		if (count != 1)
+		if (strlen(command_buffer) == 0)
 		{
 			print_error();
 		}
