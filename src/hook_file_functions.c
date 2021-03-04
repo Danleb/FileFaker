@@ -35,7 +35,7 @@ void get_file_name_w(const wchar_t* original, wchar_t* final_file_name)
 
 void get_file_name(const char* original, char* final_file_name)
 {
-	int wide_count = MultiByteToWideChar(CP_ACP, NULL, original, -1, NULL, 0);
+	int wide_count = MultiByteToWideChar(CP_ACP, 0, original, -1, NULL, 0);
 
 	wchar_t* original_w = malloc(sizeof(wchar_t) * wide_count);
 	if (original_w == NULL)

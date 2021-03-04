@@ -10,7 +10,7 @@ const char KERNEL32_LIBRARY_NAME[] = "kernel32.dll";
 const char LOAD_LIBRARY_FUNCTION_NAME[] = "LoadLibraryA";
 
 #define LIBRARY_PATH_BUFFER_SIZE 1024
-const char full_library_path[LIBRARY_PATH_BUFFER_SIZE];
+char full_library_path[LIBRARY_PATH_BUFFER_SIZE];
 
 bool load_injector_library(PID pid)
 {
@@ -28,7 +28,7 @@ bool load_injector_library(PID pid)
 	}
 
 	SIZE_T full_path_length = GetFullPathName(INJECT_LIBRARY_NAME, LIBRARY_PATH_BUFFER_SIZE - 1, full_library_path, NULL);
-	if (full_path_length == NULL)
+	if (full_path_length == 0)
 	{
 		DWORD error = GetLastError();
 		printf("Failed to get full path, error code = %d.", error);

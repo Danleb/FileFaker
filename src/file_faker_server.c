@@ -271,7 +271,7 @@ bool wait_client_connection_is_ready(MessagingData* data)
 	}
 }
 
-REDIRECTION_HANDLE send_redirection_to(MessagingData* data, const WCHAR* file_path_to)
+REDIRECTION_HANDLE send_redirection_to(const MessagingData* data, const WCHAR* file_path_to)
 {
 	ServerMessageData server_message_data;
 	server_message_data.command_type = AddRedirection;
@@ -281,7 +281,7 @@ REDIRECTION_HANDLE send_redirection_to(MessagingData* data, const WCHAR* file_pa
 	return handle;
 }
 
-REDIRECTION_HANDLE send_redirection_from_to(MessagingData* data, const WCHAR* file_path_from, const WCHAR* file_path_to)
+REDIRECTION_HANDLE send_redirection_from_to(const MessagingData* data, const WCHAR* file_path_from, const WCHAR* file_path_to)
 {
 	ServerMessageData server_message_data;
 	server_message_data.command_type = AddRedirection;
@@ -292,7 +292,7 @@ REDIRECTION_HANDLE send_redirection_from_to(MessagingData* data, const WCHAR* fi
 	return handle;
 }
 
-REDIRECTION_HANDLE send_redirection(MessagingData* data, ServerMessageData* server_message_data)
+REDIRECTION_HANDLE send_redirection(const MessagingData* data, const ServerMessageData* server_message_data)
 {
 	DWORD bytes_written;
 	BOOL result = WriteFile(data->pipe_write_handle, server_message_data, sizeof(ServerMessageData), &bytes_written, NULL);
