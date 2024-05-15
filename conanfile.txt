@@ -1,5 +1,8 @@
 [requires]
-gtest/1.8.1@bincrafters/stable
+gtest/1.14.0
 
 [generators]
-cmake
+CMakeDeps
+
+[layout]
+cmake_layout

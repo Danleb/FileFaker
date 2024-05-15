@@ -1,6 +1,6 @@
 # FileFaker
 
-FileFaker is a project showing how to hook file functions using the DLL injection and re-writing function addresses in .idata section of loaded PE modules of process.
+FileFaker is a project showing how to hook file I/O functions using the DLL injection and re-writing function addresses in .idata section of loaded PE modules of process.
 
 ## How to use
 
@@ -8,20 +8,24 @@ You can use FileFaker as a command line util or as a library.
 
 To use from cmd:
 
-Here, the first line is command, the second line is the process ID that we want to inject into. Then we write path to the file that we want to be redirected, and the path to file we want to open instead of previous.
+Here, the first line is command, the second line is the process ID that you want to inject into. Then write path to the file that you want to be redirected, and then path to file you want to open instead of previous:
 
-```console
-
+```cmd
 redirect-file
 11540
 C:\Users\TestUser\Desktop\TrueData.txt
 C:\Users\TestUser\Desktop\FakeData.txt
-
 ```
 
-After successful execution, we will get the info message with the redirection ID. Now when we open file TrueData.txt, we get contents of the file FakeData.txt.
+You can get the process ID like this:
 
-We can use poweshell script RedirectTemplate.ps1 to look for process ID by its exe name.
+```cmd
+TASKLIST /FI "IMAGENAME eq notepad++.exe" /FO TABLE /NH | Tee-Object -Variable 
+```
+
+After successful execution, you will get the info message with the redirection ID. Now when you open file TrueData.txt, you get contents of the file FakeData.txt.
+
+You can use poweshell script RedirectTemplate.ps1 to look for process ID by its exe name.
 
 ```powershell
 .\RedirectTemplate.ps1 "notepad.exe"
@@ -33,6 +37,25 @@ Next commands are supported:
 redirect-file|rf <process_id> <file_path_from> <file_path_to>
 redirect-files|rfs <process_id> <file_path_to>
 remove|rm <redirection_id>
+```
+
+## How to build
+
+You need the next tools:
+
+* [CMake](https://cmake.org/download/)
+* [Python](https://www.python.org/downloads/)
+* [Conan package manager](https://conan.io/downloads) (major version 2)
+* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
+
+Build is done using CMake. [Conan](https://conan.io/) is used as a package manager, dependencies are downloaded and installed automatically on build.
+
+To build from cmd:
+
+```cmd
+mkdir build
+cmake -S ./ -B ./build -DCMAKE_BUILD_TYPE=Release
+cmake --build ./build
 ```
 
 ## Current state, advantages and disadvantages
@@ -59,12 +82,6 @@ As function CreateFile is used for pipes creation, this tool also can hook pipes
 The app consists of two parts: command line executable - server, and loadable library - client. When you specify the process ID, server loads the client library into that process. Client hooks file functions in executable and all loaded libraries.
 
 Communication between server and client is implemented using pipes.
-
-## How to build
-
-The build is performed using CMake. [Conan](https://conan.io/) is used as a package manager, so you will need to install it using Python.
-
-Packages are downloaded automatically on build.
 
 Tests are implemented using GTest.
 

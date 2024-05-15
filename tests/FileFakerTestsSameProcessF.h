@@ -16,7 +16,7 @@ namespace file_faker_tests
 		DWORD process_id;
 
 		void SetUp() override;
-		void FileFakerTestsSameProcessF::CreateTestFiles(std::vector<CHAR>& true_info_file_path, std::vector<CHAR>& faked_info_file_path);
+		void CreateTestFiles(std::vector<CHAR>& true_info_file_path, std::vector<CHAR>& faked_info_file_path);
 
 	private:
 		const char* TrueInfoFileName = "1.txt";

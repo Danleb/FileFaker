@@ -1,7 +1,8 @@
-#include <cstdlib>
-#include <string>
-#include <iostream>
 #include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
 #include <Windows.h>
 
 #include "CommandType.h"

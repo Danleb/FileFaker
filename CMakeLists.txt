@@ -1,44 +1,39 @@
-function(InstallConanPackages)
-	find_program(CONAN_PATH conan)
-	if(NOT EXISTS ${CONAN_PATH})
-		message(FATAL_ERROR "Conan package manager is required. Please run this command to install and setup conan: pip install conan")
-	else()
-		message(STATUS "Conan path = ${CONAN_PATH}")
-	endif()
+option(ENABLE_CONAN_INSTALL "" ON)
+if(ENABLE_CONAN_INSTALL)
+    if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan_provider.cmake")
+        message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/develop2/conan_provider.cmake"
+                      "${CMAKE_BINARY_DIR}/conan_provider.cmake"
+                      TLS_VERIFY ON)
+    endif()
+			
+    set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES "${CMAKE_BINARY_DIR}/conan_provider.cmake")
+endif()
 
-	execute_process(COMMAND ${CONAN_PATH} install ${CMAKE_CURRENT_SOURCE_DIR} -s build_type=${CMAKE_BUILD_TYPE} RESULT_VARIABLE return_code)
-	message("Conan packages install return code:" ${return_code})	
-endfunction()
+cmake_minimum_required(VERSION 3.26)
+project(FileFaker VERSION 1.0.0 LANGUAGES CXX C)
 
-cmake_minimum_required(VERSION 3.13)
-InstallConanPackages()
-project(FileFaker VERSION 1.0.0)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
+set(CMAKE_CXX_EXTENSIONS Off)
+add_compile_options(/W4)
 
-add_library(FileFakerObjectLib OBJECT "")
-set_property(TARGET FileFakerObjectLib PROPERTY POSITION_INDEPENDENT_CODE 1)
-add_library(FileFakerStaticLib STATIC $<TARGET_OBJECTS:FileFakerObjectLib>)
-add_library(FileFakerSharedLib SHARED $<TARGET_OBJECTS:FileFakerObjectLib>)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(FileFakerExecutable "")
+find_package(GTest CONFIG REQUIRED)
+
+add_library(FileFakerStaticLib STATIC)
+
+add_executable(FileFakerExecutable)
+target_link_libraries(FileFakerExecutable FileFakerStaticLib)
 set_target_properties(FileFakerExecutable PROPERTIES 
 	OUTPUT_NAME "filefaker"
-	RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin
 )
 
-add_library(FileFakerClient SHARED "")
-set_target_properties(FileFakerClient PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin
-)
+add_library(FileFakerClient SHARED)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+enable_testing()
 
 add_subdirectory("src")
 add_subdirectory("headers")
 add_subdirectory("tests")
-
-target_link_libraries(FileFakerExecutable FileFakerObjectLib)
-
-enable_testing()

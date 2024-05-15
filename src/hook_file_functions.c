@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <Windows.h>
 #include <string.h>
+
+#include <Windows.h>
 
 #include "hook_file_functions.h"
 #include "redirections_manager.h"

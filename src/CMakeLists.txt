@@ -1,4 +1,4 @@
-target_sources(FileFakerObjectLib PRIVATE
+target_sources(FileFakerStaticLib PRIVATE
 	"file_faker_server.c"
 	"injector_loader.c"	
 )

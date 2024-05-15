@@ -6,9 +6,10 @@ target_include_directories(TestFileReaderProgram PRIVATE
 
 add_executable(FileFakerTests "")
 
-target_link_libraries(FileFakerTests
-	FileFakerObjectLib
-	${CONAN_LIBS}
+target_link_libraries(FileFakerTests PRIVATE
+	FileFakerStaticLib
+	GTest::GTest
+	GTest::Main
 )
 
 target_sources(FileFakerTests PRIVATE
@@ -27,5 +28,3 @@ add_test(NAME FileFakerTests
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	COMMAND FileFakerTests
 )
-
-message("BINARY="${CMAKE_BINARY_DIR})

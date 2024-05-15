@@ -1,4 +1,4 @@
-target_include_directories(FileFakerObjectLib PUBLIC
+target_include_directories(FileFakerStaticLib PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}
 )
 

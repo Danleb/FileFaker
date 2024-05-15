@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
 #include <Windows.h>
 
 #include "imports_finder.h"

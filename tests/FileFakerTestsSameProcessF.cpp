@@ -1,8 +1,12 @@
 #include <fstream>
-#include <gtest/gtest.h>
-#include <Windows.h>
 #include <codecvt>
+
+#include <Windows.h>
+
+#include <gtest/gtest.h>
+
 #include "file_faker_server.h"
+
 #include "FileFakerTestsSameProcessF.h"
 
 namespace file_faker_tests

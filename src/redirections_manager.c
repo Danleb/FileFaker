@@ -59,6 +59,8 @@ REDIRECTION_HANDLE add_redirection(RedirectionData redirection_data)
 	free(local_redirection_datas);
 	local_redirection_datas = new_datas;
 
+	++local_redirections_count;
+
 	return new_redirection_handle;
 }
 

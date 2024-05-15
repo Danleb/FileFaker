@@ -26,12 +26,34 @@ void print_redirection_result(REDIRECTION_HANDLE redirection_handle)
 	}
 }
 
+void remove_quotes(char* str)
+{
+	size_t length = strlen(str);
+	if (length == 0)
+	{
+		return;
+	}
+
+	char* lastSymbol = &str[length - 1];
+	if (*lastSymbol == '\'' || *lastSymbol == '\"')
+	{
+		*lastSymbol = 0;
+		--length;
+	}
+
+	if (str[0] == '\'' || str[0] == '\"')
+	{
+		memmove(str, &str[1], length - 1);
+		str[length - 1] = 0;
+	}
+}
+
 int main()
 {
 	char file_from_buffer[CMD_BUFFER_SIZE];
 	char file_to_buffer[CMD_BUFFER_SIZE];
 	char command_buffer[CMD_BUFFER_SIZE];
-	int pid;
+	int pid = -1;
 
 	while (true)
 	{
@@ -54,8 +76,12 @@ int main()
 
 			printf("Print file from:\n");
 			gets_s(file_from_buffer, CMD_BUFFER_SIZE);
+
 			printf("Print file to:\n");
 			gets_s(file_to_buffer, CMD_BUFFER_SIZE);
+
+			remove_quotes(file_from_buffer);
+			remove_quotes(file_to_buffer);
 
 			REDIRECTION_HANDLE redirection_handle = redirect_file_io(pid, file_from_buffer, file_to_buffer);
 			print_redirection_result(redirection_handle);
@@ -71,9 +97,10 @@ int main()
 				continue;
 			}
 
-			gets_s(file_from_buffer, CMD_BUFFER_SIZE);
 			printf("Print file to:");
 			gets_s(file_from_buffer, CMD_BUFFER_SIZE);
+
+			remove_quotes(file_from_buffer);
 
 			REDIRECTION_HANDLE redirection_handle = redirect_files_io(pid, file_from_buffer);
 			print_redirection_result(redirection_handle);
@@ -82,8 +109,8 @@ int main()
 		{
 			printf("Print redirection handle ID to remove:");
 			int redirection_handle;
-			int count = scanf("%s", &redirection_handle);
-			if (count != 0)
+			int count = scanf("%i", &redirection_handle);
+			if (count != 1)
 			{
 				print_error();
 			}
