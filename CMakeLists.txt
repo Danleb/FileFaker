@@ -24,6 +24,8 @@ find_package(GTest CONFIG REQUIRED)
 
 add_library(FileFakerStaticLib STATIC)
 
+target_link_libraries(FileFakerStaticLib PUBLIC Pathcch.lib)
+
 add_executable(FileFakerExecutable)
 target_link_libraries(FileFakerExecutable FileFakerStaticLib)
 set_target_properties(FileFakerExecutable PROPERTIES 
@@ -31,6 +33,7 @@ set_target_properties(FileFakerExecutable PROPERTIES
 )
 
 add_library(FileFakerClient SHARED)
+target_link_libraries(FileFakerClient PUBLIC Pathcch.lib)
 
 enable_testing()
 

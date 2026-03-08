@@ -20,7 +20,7 @@ C:\Users\TestUser\Desktop\FakeData.txt
 You can get the process ID like this:
 
 ```cmd
-TASKLIST /FI "IMAGENAME eq notepad++.exe" /FO TABLE /NH | Tee-Object -Variable 
+TASKLIST /FI "IMAGENAME eq notepad++.exe" /FO TABLE /NH
 ```
 
 After successful execution, you will get the info message with the redirection ID. Now when you open file TrueData.txt, you get contents of the file FakeData.txt.

@@ -6,6 +6,8 @@ target_include_directories(TestFileReaderProgram PRIVATE
 
 add_executable(FileFakerTests "")
 
+add_dependencies(FileFakerTests FileFakerClient)
+
 target_link_libraries(FileFakerTests PRIVATE
 	FileFakerStaticLib
 	GTest::GTest
